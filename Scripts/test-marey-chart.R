@@ -39,6 +39,7 @@ df[c("ep_icd10", "Specialty")][is.na(df[c("ep_icd10", "Specialty")])] <- ""
 #time period of one year
 
 # 1) - simple scatter plot diagram (all visits on same line)
+
 df.plot <- subset(df, patientid == "C4453")
 
 df.plot[, "singlept"] <- 1
@@ -61,3 +62,24 @@ g + geom_label_repel(aes(label=Specialty, fill = Specialty, angle = 90),
                      nudge_x = 0.2,
                      show.legend = FALSE)
 #angle not working - need to slant text by 45 degrees
+
+
+#2) - simple scatter plot diagram (scatter points depending on type of visit)
+
+p <- ggplot(df.plot, aes(y=date, x = visit_type, colour = visit_type)) + 
+  geom_point(aes(colour = visit_type),shape = 15, size = 2) +
+  scale_y_continuous(name = "day of patient journey",trans = "reverse", limits = c(365,1)) +
+  scale_x_discrete(drop = FALSE) +
+  theme(panel.border = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line( size=.1, color="black"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_line( size=.1, color="light grey"))
+p
+
+#layer on specialty with repel
+p + geom_label_repel(aes(label=Specialty, fill = Specialty, angle = 90),
+                     colour = "white",
+                     size = 3.5, 
+                     nudge_x = 0.2,
+                     show.legend = FALSE)
