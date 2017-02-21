@@ -38,27 +38,26 @@ df[c("ep_icd10", "Specialty")][is.na(df[c("ep_icd10", "Specialty")])] <- ""
 #will plot visit type over time
 #time period of one year
 
-#simple scatter plot diagram
+# 1) - simple scatter plot diagram (all visits on same line)
 df.plot <- subset(df, patientid == "C4453")
-g <- ggplot(df.plot, aes(x=visit_type, y = date, colour = visit_type)) + 
-      geom_point() +
-      scale_y_continuous(name = "day of patient journey", trans = "reverse", limits = c(365,1)) +
-      scale_x_discrete(drop = FALSE) +
+
+df.plot[, "singlept"] <- 1
+
+g <- ggplot(df.plot, aes(x=date, y = singlept, colour = visit_type)) + 
+      geom_point(aes(colour = visit_type),shape = 15, size = 1.5) +
+      scale_x_continuous(name = "day of patient journey", limits = c(1,365)) +
+      scale_y_discrete(drop = FALSE) +
       theme(panel.border = element_blank(),
             panel.background = element_blank(),
             axis.line = element_line( size=.1, color="black"),
-            panel.grid.major.y = element_blank(),
-            panel.grid.major.x = element_line( size=.1, color="light grey"))
+            panel.grid.major.x = element_blank(),
+            panel.grid.major.y = element_line( size=.1, color="light grey"))
 g
-#points too small
-#x axis looks too wide for now
 
 #layer on specialty with repel
-g + geom_label_repel(aes(label =Specialty, fill = Specialty),
+g + geom_label_repel(aes(label=Specialty, fill = Specialty, angle = 90),
                      colour = "white",
                      size = 3.5, 
                      nudge_x = 0.2,
                      show.legend = FALSE)
-
-#layer on text describing journey
-#use geom_text_repel
+#angle not working - need to slant text by 45 degrees
